@@ -1,0 +1,6 @@
+-r core.txt
+torch==2.8.0
+transformers==5.17.0
+librosa==1.0.1
+scipy==1.18.1
+soundfile==0.14.0

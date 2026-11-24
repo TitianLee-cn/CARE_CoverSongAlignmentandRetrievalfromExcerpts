@@ -1,0 +1,7 @@
+-r core.txt
+torch==2.8.0
+torchaudio==2.8.0
+transformers==4.57.6
+qwen-asr==0.0.6
+demucs==4.1.0
+fasttext-wheel==0.9.2
