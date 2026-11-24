@@ -7,6 +7,7 @@ import numpy as np
 
 from .cache import MANIFESTS, OUTPUT, ROOT, load_stage, read, rows, write
 from .lyrics import gate, iou, jaccard, local_alignment, reliable, similarity
+from .position_fusion import select_reference_interval
 
 DEFAULTS=dict(min_seconds=3.,min_power=1e-5,min_ratio=.10,lang_conf=.80,lang_margin=.20,
               min_iou=.50,position_margin=.10,original=.65,rewrite=.25)
@@ -143,6 +144,16 @@ def predict(corpus,request,background,mode):
     work,other=request["work_id"],request["reference_work_id"]
     result=corpus.score_candidate(work,other,background,semantic_only=(mode=="semantic"))
     result.update(display=[],type_status="pending")
+    region=request.get("reference_interval")
+    if (mode=="fusion" and request.get("confirmed",False) and region is None
+            and request.get("position_candidates")):
+        config=request["position_config"]
+        fused=select_reference_interval(request["position_candidates"],corpus.refs[other]["duration_sec"],
+                                        config["weights"],start_bias_sec=config.get("start_bias_sec",0.),
+                                        use_lyrics=result["gate"]["enabled"])
+        if fused is not None:
+            region=fused["reference_interval"]
+            result.update(reference_interval=region,position_fusion=fused)
     if not result["gate"]["enabled"]:
         result["type_status"]="skipped"
         return result
@@ -150,7 +161,6 @@ def predict(corpus,request,background,mode):
         return result
     q,ql,_=corpus.evidence(work,"query")
     r,rl,_=corpus.evidence(other,"reference")
-    region=request.get("reference_interval")
     can_locate=request.get("context","oracle")=="oracle" or region is not None
     music=music_pairs(q,r,request.get("blocks",[]),region,corpus.cfg,mode) if can_locate and mode!="semantic" else []
     result["display"]=([m for m in result["matches"] if not region or iou(m["reference_sec"],region)>0]

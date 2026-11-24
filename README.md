@@ -9,6 +9,7 @@ B 组实现包含 Covers80 歌词特征、候选匹配、句对定位与翻唱�
 | `group_b/import_shared.py`、`cache.py`、`media.py` | 校验 A 组共享清单和录音，读写缓存，以采样点裁剪查询音频 |
 | `group_b/features.py` | Echora Kiki 转写、Demucs 人声、Qwen 句向量和语种证据，以及 Jamendo 的 Qwen3-ASR＋ForcedAligner |
 | `group_b/lyrics.py`、`pairs.py` | 歌词清洗、shingles、有效歌词门槛、词面与语义打分、有序匹配、句对展示和判型 |
+| `group_b/position_fusion.py`、`joint_tune40.py` | 在同一参考位置上融合音频和歌词，导出整段候选，按官方内外折复现实验 |
 | `group_b/covers_evidence.py`、`cover_alignment.py` | 输出默认设置下的折内拟合证据，接入 A 的正确版本对路径，比较语义、音乐和融合三种展示结果 |
 | `group_b/annotations.py`、`gates.py`、`evaluate.py` | 整理 A/B 人工标签，并进行门槛验证及评分 |
 | `group_b/jamendo.py`、`pool_handoff.py` | 对官方逐行标注评分，并按预测行汇聚 A 的 MERT 帧 |
@@ -59,6 +60,39 @@ score = corpus.score_candidate("covers80_001", "covers80_002", background)
 ```
 
 `Corpus.score_candidate` 按官方作品 ID 索引查询和候选，返回原始分数、匹配行及双侧时间，并在歌词分支缺失时返回原因。查询时间从 30 秒片段起点算，参考时间从原录音起点算。`Corpus.calibrate` 只接收当前折的拟合作品。候选列表由 A 的检索流水线提供。
+
+### 同位置整段融合
+
+曲库检索确认参考录音后，可以用 `build_position_candidates` 根据音频、歌词缓存和 A 的路径生成整段候选，再交给原来的 `predict`。位置打分考察各候选前后两秒内的音频和歌词证据，并在歌词证据较弱时减小其权重。输出为参考录音上的 30 秒区间及选中的候选索引。
+
+```python
+from group_b.joint_tune40 import build_position_candidates
+from group_b.pairs import predict
+
+# corpus、background 使用上一步已建立的语料与本折拟合参数。
+# paths 含 A 组各条路径的 reference_span_sec，blocks 仍使用句对接口的格式。
+request = {
+    "work_id": query_work_id, "reference_work_id": confirmed_reference_work_id,
+    "confirmed": True, "context": "end_to_end", "blocks": reliable_music_blocks,
+}
+request["position_candidates"] = build_position_candidates(
+    corpus.queries[query_work_id], corpus.refs[confirmed_reference_work_id], request, paths
+)
+request["position_config"] = fold_position_config
+result = predict(corpus, request, background, mode="fusion")
+```
+
+`fold_position_config` 含 `weights` 和可选的 `start_bias_sec`。权重名为 `lyrics_mix`、`audio_temperature`、`agreement_bonus`、`far_penalty`。也可把候选直接交给 `group_b.position_fusion.select_reference_interval`。候选字段为 `start_sec`、`audio`、`a_path`、`anchors`、`timed_words`、`window_words` 和 `far_penalty`。路径和歌词分量取 0 到 1，缺失证据填 0。远距离低置信候选的惩罚分量填 −1，其余填 0。已有的 `reference_interval` 可以继续从 A 侧传入。歌词门槛未通过时仍可用音频证据选区间。
+
+复现 B 侧后 40 对的五折实验需先生成正确版本对路径索引，并提供候选标注、上一轮实验结果和调参前的候选清单。
+
+```bash
+"$B" -m group_b.joint_tune40 /path/to/dataset_candidates.jsonl \
+  /path/to/previous_validation.json "$CARE_OUTPUT/joint_review" \
+  --prior /path/to/earlier_candidate_manifest.json
+```
+
+复现时每折只在开发集的内折选权重，在外折留出作品上报告一致性。原实验还使用了可用的独立转写缓存与音高候选缓存。缺省时使用本地 Kiki 歌词和独立音频搜索，强度可能不同。候选标注在拟合实验中作为指定参考，人工正式评分仍按下一节导入。
 
 ## 正式人工评测与 Jamendo
 
