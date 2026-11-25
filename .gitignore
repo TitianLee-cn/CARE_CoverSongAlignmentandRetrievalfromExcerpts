@@ -1,5 +1,12 @@
 /data_weights/
-/precomputed_data/
+/precomputed_data/**
+!/precomputed_data/reference_labels/
+!/precomputed_data/reference_labels/covers80/
+!/precomputed_data/reference_labels/covers80/reference_intervals.jsonl
+!/precomputed_data/reference_labels/covers80/reference_intervals_before_23_review.jsonl
+!/precomputed_data/review/
+!/precomputed_data/review/e2_no_abstention_23_listening/
+!/precomputed_data/review/e2_no_abstention_23_listening/manual_review.jsonl
 /vendor/
 /outputs/
 **/.venv*/

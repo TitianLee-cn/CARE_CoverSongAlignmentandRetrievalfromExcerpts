@@ -19,7 +19,7 @@ CARE 从 30 秒音乐片段检索同一作品的录音，在参考录音中定�
 | `precomputed_data/shared/` | 录音、查询与五折清单 |
 | `precomputed_data/cover_embeddings/`、`precomputed_data/beat_chroma/` | 检索向量、时间窗和逐拍特征 |
 | `precomputed_data/group_b/` | 歌词与人声缓存、B 组清单和校准证据 |
-| `precomputed_data/reference_labels/covers80/` | 区间参考答案和历史版本 |
+| `precomputed_data/reference_labels/covers80/` | 已归档的 Covers80 区间答案 |
 | `precomputed_data/experiments/` | 已冻结的参数、模型与逐查询预测 |
 
 ```bash
@@ -45,5 +45,13 @@ python inference/confirmation_replay.py report
 | JamendoLyrics 时间戳对比、B 侧有效歌词与对齐实验 | [B 组复现实验](b_lyrics/README.md) |
 
 报告区分歌曲首名、实际报歌、区间输出，以及歌曲和区间同时命中。Covers80 有多个可接受区间时取最大 IoU，门槛为 0.50。人工无法确认的两条区间在共同比较中标为待确认，项目约定的补计另行汇报。
+
+## Covers80 区间标注
+
+| 文件 | 内容 |
+| --- | --- |
+| [当前参考区间](precomputed_data/reference_labels/covers80/reference_intervals.jsonl) | 80 条评分答案，含 20 条人工标注和 60 条自动参考 |
+| [23 条复核之前的参考区间](precomputed_data/reference_labels/covers80/reference_intervals_before_23_review.jsonl) | 80 条历史评分答案，含 9 条人工标注和 71 条自动参考，用于复现原 Kiki 实验 |
+| [最近一轮人工复核记录](precomputed_data/review/e2_no_abstention_23_listening/manual_review.jsonl) | 23 条试听结论，保留修订前的区间、复核结果和 2 条待确认记录 |
 
 音频、权重、缓存、试听素材和预测文件保存在本地。各数据集和第三方权重按各自许可使用。
