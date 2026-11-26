@@ -2,3 +2,5 @@
 *.sh text eol=lf
 *.md text eol=lf
 *.txt text eol=lf
+inference/experiments/unified_care/pipeline-unified.patch text eol=lf whitespace=-blank-at-eol
+assets/covers80/unified_care_review_audio.zip filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,18 @@
+{
+  "gated_correct_confirmations": 61,
+  "gated_qualifying_proposals": 58,
+  "gated_outputs": 47,
+  "gated_joint_hits": 43,
+  "gated_mean_iou": 0.8133033712660178,
+  "forced_query_count": 80,
+  "forced_correct_song": 73,
+  "forced_joint_hits": 54,
+  "forced_joint_hits_by_fold": {
+    "1": 9,
+    "2": 12,
+    "3": 12,
+    "4": 9,
+    "5": 12
+  },
+  "human_annotation_count": 24
+}

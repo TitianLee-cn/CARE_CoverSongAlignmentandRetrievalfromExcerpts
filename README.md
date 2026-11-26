@@ -2,6 +2,8 @@
 
 B 组实现包含 Covers80 歌词特征、候选匹配、句对定位与翻唱判型，以及 JamendoLyrics 时间戳评测。音频、模型权重、A 组交接包和人工标签由运行者放在本地。
 
+Unified + CARE 五折复现见[实验入口](inference/experiments/unified_care/README.md)，汇总结果和试听包见[实验报告](docs/Covers80_result.md)。
+
 ## 代码结构
 
 | 目录或模块 | 作用 |

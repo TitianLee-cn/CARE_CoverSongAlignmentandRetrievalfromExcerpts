@@ -1,0 +1,24 @@
+{"query_id": "covers80_002_q", "fold": 4, "title": "Abracadabra", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_005_q", "fold": 1, "title": "All_Tomorrow_s_Parties", "human_judgement": "not_aligned", "human_start_sec": 132.34, "human_end_sec": 152.14, "human_note": ""}
+{"query_id": "covers80_007_q", "fold": 3, "title": "Before_You_Accuse_Me", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_010_q", "fold": 3, "title": "Caroline_No", "human_judgement": "aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_011_q", "fold": 2, "title": "Cecilia", "human_judgement": "aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_015_q", "fold": 1, "title": "Day_Tripper", "human_judgement": "not_aligned", "human_start_sec": 81.97, "human_end_sec": 100.52, "human_note": ""}
+{"query_id": "covers80_018_q", "fold": 1, "title": "Enjoy_The_Silence", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_019_q", "fold": 4, "title": "Faith", "human_judgement": "not_aligned", "human_start_sec": 82.15, "human_end_sec": 93.63, "human_note": "这个翻唱只有部分"}
+{"query_id": "covers80_021_q", "fold": 4, "title": "Gold_Dust_Woman", "human_judgement": "unsure", "human_start_sec": null, "human_end_sec": null, "human_note": "这里面根本没有这段啊"}
+{"query_id": "covers80_025_q", "fold": 3, "title": "Hush", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_026_q", "fold": 4, "title": "I_Can_t_Get_Next_To_You", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_027_q", "fold": 2, "title": "I_Can_t_Get_No_Satisfaction", "human_judgement": "unsure", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_028_q", "fold": 1, "title": "I_Don_t_Like_Mondays", "human_judgement": "aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_031_q", "fold": 5, "title": "I_m_Losing_You", "human_judgement": "partial", "human_start_sec": null, "human_end_sec": null, "human_note": "但是这个本来就只有一部…"}
+{"query_id": "covers80_032_q", "fold": 1, "title": "I_m_Not_In_Love", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_033_q", "fold": 4, "title": "It_s_Tricky", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_036_q", "fold": 1, "title": "Little_Wing", "human_judgement": "not_aligned", "human_start_sec": 214.58, "human_end_sec": null, "human_note": "你标的这个是正确答案"}
+{"query_id": "covers80_042_q", "fold": 2, "title": "My_Heart_Will_Go_On", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_043_q", "fold": 5, "title": "Never_Let_Me_Down_Again", "human_judgement": null, "human_start_sec": null, "human_end_sec": null, "human_note": "原标注认可的位置 2/2 是…"}
+{"query_id": "covers80_046_q", "fold": 2, "title": "No_Woman_No_Cry", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": "这个找不到，根据现有的…"}
+{"query_id": "covers80_061_q", "fold": 3, "title": "Street_Fighting_Man", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_065_q", "fold": 1, "title": "Take_On_Me", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_068_q", "fold": 4, "title": "Time", "human_judgement": "not_aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}
+{"query_id": "covers80_077_q", "fold": 4, "title": "What_s_Going_On", "human_judgement": "aligned", "human_start_sec": null, "human_end_sec": null, "human_note": ""}

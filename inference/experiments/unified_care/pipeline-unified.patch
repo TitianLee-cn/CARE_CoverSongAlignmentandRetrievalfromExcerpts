@@ -1,0 +1,97 @@
+diff --git a/inference/pipeline.py b/inference/pipeline.py
+index 4a75d9e..0045699 100644
+--- a/inference/pipeline.py
++++ b/inference/pipeline.py
+@@ -70,7 +70,8 @@ def extrapolate(q0, r0, q1, r1, duration):
+ 
+ 
+ class Engine:
+-    def __init__(self, outer, window, overlap, recall_weight=0):
++    def __init__(self, outer, window, overlap, recall_weight=0, *, audio_model="coverhunter"):
++        self.audio_model = audio_model
+         self.recall_weight = recall_weight
+         self.outer = outer
+         self.window = window
+@@ -88,7 +89,7 @@ class Engine:
+         if (self.dev, self.test) != (self.fold["development_work_ids"], self.fold["test_work_ids"]):
+             raise ValueError("A/B outer folds differ")
+         self.vectors, self.bounds, self.beats, self.modes = {}, {}, {}, {}
+-        roots = [DATA / "cover_embeddings/coverhunter", DATA / "beat_chroma"]
++        roots = [DATA / "cover_embeddings" / audio_model, DATA / "beat_chroma"]
+         indexes = [{row["id"]: row for row in read_jsonl(root / "index.jsonl")} for root in roots]
+         for work, query in self.queries.items():
+             for side, field in (("query", "query_recording_id"), ("reference", "reference_recording_id")):
+@@ -120,6 +121,8 @@ class Engine:
+                         }:
+                             raise ValueError(f"Shard differs from index: {path}")
+                         if root == roots[0]:
++                            if row["model"] != audio_model:
++                                raise ValueError(f"Wrong audio model in cache: {path}")
+                             config = row["configs"].index(
+                                 dict(window_seconds=window, overlap_percent=overlap)
+                             )
+@@ -485,12 +488,13 @@ def inner_ranked_splits(engine, *, harmony_weight=0.3, lyric_rerank=True, load_l
+ 
+ 
+ def fit(
+-    engine, audit_dir=None, *, harmony_weight=0.3, lyric_rerank=True, e2_lyrics=True, paired_e2=False
++    engine, audit_dir=None, *, harmony_weight=0.3, lyric_rerank=True, e2_lyrics=True, paired_e2=False,
++    labels_path=None,
+ ):
+     # Reference intervals are consulted only for judging proposals on inner validation works.
+     labels = {
+         r["work_id"]: r["reference_intervals"]
+-        for r in read_jsonl(DATA / "reference_labels/covers80/reference_intervals.jsonl")
++        for r in read_jsonl(labels_path or DATA / "reference_labels/covers80/reference_intervals.jsonl")
+         if r["work_id"] in engine.dev
+     }
+     observations, positions, held_out = [], [], []
+@@ -564,6 +568,7 @@ def fit(
+         lyric_rerank=lyric_rerank,
+         e2_lyrics=e2_lyrics,
+         outer_fold=engine.outer,
++        audio_model=engine.audio_model,
+         recall_lambda=engine.recall_weight,
+         window=engine.window,
+         overlap=engine.overlap,
+@@ -677,6 +682,7 @@ def main():
+     parser.add_argument("--fold", type=int, choices=range(1, 6), required=True)
+     parser.add_argument("--window", type=int, choices=(10, 15, 20))
+     parser.add_argument("--overlap", type=int, choices=(25, 50, 75))
++    parser.add_argument("--audio-model", choices=("coverhunter", "unified"), default="coverhunter")
+     parser.add_argument(
+         "--query-id", action="append", default=[], help="Repeatable; default: all held-out queries"
+     )
+@@ -702,17 +708,22 @@ def main():
+     if args.window_config:
+         if args.window or args.overlap:
+             parser.error("Use either --window-config or explicit window settings")
++        configured_model = json.loads(args.window_config.read_text()).get("model")
++        if configured_model is not None and configured_model != args.audio_model:
++            parser.error("Window configuration belongs to a different audio model")
+         args.window, args.overlap, recall_weight = selected_recall(
+             args.window_config, args.fold, file_sha256(DATA / "shared/folds.json")
+         )
+     else:
+         args.window = args.window or 15
+         args.overlap = args.overlap or 50
+-    engine = Engine(args.fold, args.window, args.overlap, recall_weight)
++    engine = Engine(args.fold, args.window, args.overlap, recall_weight, audio_model=args.audio_model)
+     ids = {engine.queries[w]["query_id"]: w for w in engine.test}
+     if any(q not in ids for q in args.query_id):
+         parser.error(f"Select held-out query IDs from {list(ids)}")
+     dest = args.output_root / f"fold{args.fold}_w{args.window}_o{args.overlap}"
++    if args.audio_model != "coverhunter":
++        dest /= args.audio_model
+     if recall_weight:
+         dest = dest / f"lambda{recall_weight:g}"
+     if args.e2 == "path":
+@@ -729,6 +740,8 @@ def main():
+         write_json(param_path, params)
+     else:
+         params = json.loads(param_path.read_text())
++    if params.get("audio_model", "coverhunter") != args.audio_model:
++        raise ValueError("Parameters do not belong to this audio model")
+     if not args.parameters and any(params.get(k, defaults[k]) != v for k, v in settings.items()):
+         raise ValueError("Parameters do not belong to these scoring switches")
+     if params.get("recall_lambda", 0) != recall_weight:
